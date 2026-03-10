@@ -7,19 +7,14 @@ namespace Helpers
     {
         public static int RoundNearestNonZeroInt(float val)
         {
-            if (val > 0)
+            return val switch // Can shortcut using a switch block because its comparing against static values
             {
-                return Mathf.CeilToInt(val);
-            }
-            else if (val < 0)
-            {
-                return Mathf.FloorToInt(val);
-            }
-            else
-            {
-                return 0;
-            }
+                > 0 => Mathf.CeilToInt(val),
+                < 0 => Mathf.FloorToInt(val),
+                _ => 0
+            };
         }
+
 
         public static int RoundNearestNonZeroInt(float val, float floor)
         {
@@ -37,10 +32,17 @@ namespace Helpers
             }
         }
 
+
+
         // If value is greater than max, cap it at max
         // If value is less than min, cap it at min
         public static int Wrap(int input, int min, int max)
         {
+            if ((max - min) == 0)
+            {
+                return 0;
+            }
+            
             if (input < min)
             {
                 return max - (min - input) % (max - min);
@@ -55,24 +57,19 @@ namespace Helpers
         {
             var chosen = new List<T>();
 
-            if (pool.Count >= 2)
-            {
-                var choices = pool;
+            if (pool.Count < 2) return chosen;
+            
+            var choices = pool;
 
-                var chooseA = choices[UnityEngine.Random.Range(0, pool.Count - 1)];
-                chosen.Add(chooseA);
-                choices.Remove(chooseA);
+            var chooseA = choices[Random.Range(0, pool.Count - 1)];
+            chosen.Add(chooseA);
+            choices.Remove(chooseA);
 
-                var chooseB = choices[UnityEngine.Random.Range(0, pool.Count - 1)];
-                chosen.Add(chooseB);
-            }
+            var chooseB = choices[Random.Range(0, pool.Count - 1)];
+            chosen.Add(chooseB);
+
 
             return chosen;
-        }
-
-        public static float RoundFloatToDecimalPlaces(float value, int decimals)
-        {
-            return Mathf.Round(value * 10 * decimals) / (10 * decimals);
         }
     }
 }
